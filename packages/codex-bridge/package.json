@@ -16,7 +16,7 @@
   "homepage": "https://github.com/oaslananka/a2a-mesh/tree/main/packages/codex-bridge#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/oaslananka/a2a-mesh.git",
+    "url": "git+https://github.com/oaslananka/a2a-mesh.git",
     "directory": "packages/codex-bridge"
   },
   "bugs": {

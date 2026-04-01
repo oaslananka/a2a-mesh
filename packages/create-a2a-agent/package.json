@@ -14,7 +14,7 @@
   "homepage": "https://github.com/oaslananka/a2a-mesh/tree/main/packages/create-a2a-agent#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/oaslananka/a2a-mesh.git",
+    "url": "git+https://github.com/oaslananka/a2a-mesh.git",
     "directory": "packages/create-a2a-agent"
   },
   "bugs": {
@@ -25,7 +25,9 @@
   },
   "type": "module",
   "sideEffects": false,
-  "bin": "./dist/index.cjs",
+  "bin": {
+    "create-a2a-mesh": "dist/index.cjs"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
