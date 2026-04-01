@@ -1,0 +1,51 @@
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - main
+  drafts: false
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npm run lint
+    displayName: 'Lint check'
+
+  - script: npm run typecheck
+    displayName: 'Type check'
+
+  - script: npm run build
+    displayName: 'Build'
+
+  - script: npm run test
+    displayName: 'Tests'
+
+  - script: |
+      for pkg in packages/core packages/client packages/adapters packages/registry packages/testing packages/ws packages/grpc cli; do
+        echo "Smoke testing $pkg..."
+        if [ "$pkg" = "cli" ]; then
+          if [ -f "./$pkg/dist/index.cjs" ]; then
+            node "./$pkg/dist/index.cjs" --help >/dev/null && echo "  ✓ $pkg"
+          else
+            echo "  ⚠ $pkg/dist/index.cjs not found"
+          fi
+        elif [ -f "./$pkg/dist/index.cjs" ]; then
+          node -e "require('./$pkg/dist/index.cjs')" && echo "  ✓ $pkg"
+        else
+          echo "  ⚠ $pkg/dist/index.cjs not found (may be ESM-only)"
+        fi
+      done
+    displayName: 'Smoke test packages'
+
+  - script: |
+      npx changeset status --since=origin/main
+    displayName: 'Changeset check'
+    continueOnError: false

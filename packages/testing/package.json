@@ -1,0 +1,54 @@
+{
+  "name": "a2a-mesh-testing",
+  "version": "1.0.0",
+  "description": "Testing helpers, fixtures and matchers for a2a-mesh agents",
+  "keywords": [
+    "a2a",
+    "agent2agent",
+    "testing",
+    "vitest",
+    "typescript"
+  ],
+  "author": "oaslananka",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/oaslananka/a2a-mesh#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oaslananka/a2a-mesh.git",
+    "directory": "packages/testing"
+  },
+  "bugs": {
+    "url": "https://github.com/oaslananka/a2a-mesh/issues"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "unbuild",
+    "typecheck": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "a2a-mesh": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

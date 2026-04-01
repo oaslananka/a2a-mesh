@@ -1,0 +1,15 @@
+{
+  "entryPoints": [
+    "packages/core/src/index.ts",
+    "packages/client/src/index.ts",
+    "packages/adapters/src/index.ts",
+    "packages/registry/src/index.ts",
+    "packages/testing/src/index.ts"
+  ],
+  "out": "docs-site/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "categorizeByGroup": true
+}

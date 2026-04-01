@@ -1,0 +1,79 @@
+trigger:
+  tags:
+    include:
+      - 'v*'
+
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: github-mirror-secrets
+
+steps:
+  - checkout: self
+    persistCredentials: true
+    fetchDepth: 0
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npm run lint && npm run typecheck && npm run build && npm run test
+    displayName: 'Full quality gate'
+
+  - script: npm audit --omit=dev --audit-level=high
+    displayName: 'Security audit'
+
+  - script: |
+      npx changeset version
+      git config user.email "ci-bot@users.noreply.github.com"
+      git config user.name "a2a-mesh CI"
+      git add -A
+      git commit -m "chore: version packages [skip ci]" || echo "No changes to commit"
+    displayName: 'Apply changeset versions'
+
+  - script: |
+      VERSION=$(node -p "require('./packages/core/package.json').version")
+      NOTES=$(npx extract-changelog-release CHANGELOG.md "$VERSION")
+      echo "##vso[task.setvariable variable=RELEASE_NOTES]$NOTES"
+    displayName: 'Extract release notes'
+
+  - script: |
+      bash scripts/sync-github.sh
+    displayName: 'Sync to GitHub mirror'
+    env:
+      GITHUB_PAT: $(GITHUB_PAT)
+      GITHUB_REPO: $(GITHUB_REPO)
+
+  - script: |
+      if [ -n "${GITLAB_TOKEN:-}" ] && [ -n "${GITLAB_REPO:-}" ]; then
+        bash scripts/sync-gitlab.sh
+      else
+        echo "Skipping GitLab mirror sync (GITLAB_TOKEN or GITLAB_REPO not set)."
+      fi
+    displayName: 'Sync to GitLab mirror (optional)'
+    env:
+      GITLAB_TOKEN: $(GITLAB_TOKEN)
+      GITLAB_REPO: $(GITLAB_REPO)
+      GITLAB_HOST: $(GITLAB_HOST)
+
+  - script: |
+      echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)" > ~/.npmrc
+      for workspace in packages/core packages/adapters packages/registry cli packages/create-a2a-agent; do
+        npm publish --provenance --access public --workspace "$workspace"
+      done
+    displayName: 'Publish packages to npm'
+
+  - script: |
+      python3 scripts/azuredevops.py github-release \
+        --repo "$(GITHUB_REPO)" \
+        --token "$(GITHUB_PAT)" \
+        --tag "$(Build.SourceBranchName)" \
+        --changelog CHANGELOG.md \
+        --notes "$(RELEASE_NOTES)"
+    displayName: 'Create GitHub Release'

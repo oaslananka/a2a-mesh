@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  registry:
+    build: .
+    command: node -e "const { RegistryServer } = require('a2a-mesh-registry'); new RegistryServer().start(3099)"
+    ports:
+      - '3099:3099'
+    environment:
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3099/health']
+      interval: 10s
+
+  demo:
+    build:
+      context: .
+      dockerfile: ./apps/demo/Dockerfile
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+      - '3002:3002'
+    depends_on:
+      registry:
+        condition: service_healthy
+    environment:
+      REGISTRY_URL: http://registry:3099
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - '16686:16686'
+      - '4318:4318'
+
+volumes:
+  redis-data:

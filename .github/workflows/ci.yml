@@ -1,0 +1,43 @@
+name: CI (Manual)
+
+# Automatic GitHub CI is disabled.
+# Azure DevOps is the source of truth for continuous integration.
+on:
+  workflow_dispatch:
+    inputs:
+      node_version:
+        description: 'Node.js version to test'
+        required: false
+        default: '20'
+        type: choice
+        options:
+          - '20'
+          - '22'
+          - '24'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    name: CI - Node ${{ inputs.node_version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Tests
+        run: npm run test -- --coverage

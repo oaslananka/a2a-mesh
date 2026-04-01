@@ -1,0 +1,108 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - 'feature/*'
+      - 'fix/*'
+  paths:
+    exclude:
+      - 'docs/*'
+      - '*.md'
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+strategy:
+  matrix:
+    # Node20:
+    #   nodeVersion: "20.x"
+    Node22:
+      nodeVersion: '22.x'
+    # Node24:
+    #   nodeVersion: "24.x"
+
+variables:
+  npm_config_cache: $(Pipeline.Workspace)/.npm
+
+steps:
+  - task: NodeTool@0
+    displayName: 'Use Node.js $(nodeVersion)'
+    inputs:
+      versionSpec: '$(nodeVersion)'
+
+  - task: Cache@2
+    displayName: 'Cache npm packages'
+    inputs:
+      key: 'npm | "$(Agent.OS)" | package-lock.json'
+      restoreKeys: |
+        npm | "$(Agent.OS)"
+      path: $(npm_config_cache)
+
+  - script: npm ci --prefer-offline
+    displayName: 'Install dependencies'
+
+  - script: npm run lint
+    displayName: 'ESLint'
+
+  - script: npm run typecheck
+    displayName: 'TypeScript type check'
+
+  - script: npm run build
+    displayName: 'Build all packages'
+
+  - script: npm run test:unit -- --coverage
+    displayName: 'Run unit tests with coverage'
+
+  - script: npm run test:integration
+    displayName: 'Run integration tests'
+    timeoutInMinutes: 5
+
+  - script: |
+      for pkg in packages/core packages/client packages/adapters packages/registry packages/testing packages/ws packages/grpc cli; do
+        echo "Smoke testing $pkg..."
+        if [ "$pkg" = "cli" ]; then
+          if [ -f "./$pkg/dist/index.cjs" ]; then
+            node "./$pkg/dist/index.cjs" --help >/dev/null && echo "  ✓ $pkg"
+          else
+            echo "  ⚠ $pkg/dist/index.cjs not found"
+          fi
+        elif [ -f "./$pkg/dist/index.cjs" ]; then
+          node -e "require('./$pkg/dist/index.cjs')" && echo "  ✓ $pkg"
+        else
+          echo "  ⚠ $pkg/dist/index.cjs not found (may be ESM-only)"
+        fi
+      done
+    displayName: 'Smoke test all packages'
+
+  - script: npx bundlesize --config .bundlesizerc.json
+    displayName: 'Check bundle sizes'
+    condition: eq(variables['nodeVersion'], '20.x')
+
+  - task: PublishTestResults@2
+    displayName: 'Publish unit test results'
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test-results/junit-unit.xml'
+      testRunTitle: 'Unit Tests - Node $(nodeVersion)'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish integration test results'
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test-results/junit-integration.xml'
+      testRunTitle: 'Integration Tests - Node $(nodeVersion)'
+
+  - task: PublishCodeCoverageResults@2
+    displayName: 'Publish code coverage'
+    condition: and(always(), eq(variables['nodeVersion'], '20.x'))
+    inputs:
+      summaryFileLocation: 'coverage/lcov.info'

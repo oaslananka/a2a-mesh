@@ -1,0 +1,88 @@
+{
+  "name": "a2a-mesh-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production-ready TypeScript runtime for Google's Agent2Agent (A2A) Protocol — server, client SDK, multi-framework adapters, registry and CLI.",
+  "keywords": [
+    "a2a",
+    "agent2agent",
+    "ai-agents",
+    "multi-agent",
+    "llm-orchestration",
+    "openai",
+    "anthropic",
+    "langchain",
+    "google-adk",
+    "crewai",
+    "llamaindex",
+    "typescript",
+    "mcp",
+    "protocol",
+    "interoperability",
+    "nodejs",
+    "monorepo",
+    "open-source"
+  ],
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "cli"
+  ],
+  "scripts": {
+    "build": "npm run build:packages",
+    "build:packages": "npm --workspaces run build --if-present",
+    "pack:stable": "npm pack --workspace packages/core --workspace packages/adapters --workspace packages/registry --workspace cli --workspace packages/create-a2a-agent",
+    "publish:stable": "npm publish --access public --workspace packages/core && npm publish --access public --workspace packages/adapters && npm publish --access public --workspace packages/registry && npm publish --access public --workspace cli && npm publish --access public --workspace packages/create-a2a-agent",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit --reporter=default --reporter=junit --outputFile.junit=./test-results/junit-unit.xml",
+    "test:integration": "vitest run --project integration --reporter=default --reporter=junit --outputFile.junit=./test-results/junit-integration.xml",
+    "test:watch": "vitest watch --project unit",
+    "test:coverage": "npm run test:unit -- --coverage",
+    "lint": "eslint .",
+    "demo": "docker-compose up demo",
+    "demo:local": "tsx apps/demo/run-demo.ts",
+    "typecheck": "npm run build:packages && npx tsc -p cli/tsconfig.json --noEmit && npx tsc -p apps/demo/tsconfig.json --noEmit && npx tsc -p apps/registry-ui/tsconfig.json --noEmit",
+    "docs:dev": "vitepress dev docs-site",
+    "docs:build": "vitepress build docs-site",
+    "docs:preview": "vitepress preview docs-site",
+    "docs:api": "typedoc",
+    "release": "changeset publish",
+    "release:stable": "npm run publish:stable",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "node scripts/run-prettier.mjs"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "node scripts/run-prettier.mjs"
+    ]
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.30.0",
+    "@eslint/js": "^10.0.1",
+    "@grpc/grpc-js": "^1.14.3",
+    "@grpc/proto-loader": "^0.8.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.5.0",
+    "@vitest/coverage-v8": "^4.1.2",
+    "better-sqlite3": "^11.10.0",
+    "bundlesize": "^0.18.2",
+    "eslint": "^10.1.0",
+    "extract-changelog-release": "^1.0.0",
+    "globals": "^17.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.0",
+    "prettier": "^3.8.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.58.0",
+    "unbuild": "^3.6.1",
+    "vitepress": "^1.6.4",
+    "vitest": "^4.1.2"
+  }
+}
