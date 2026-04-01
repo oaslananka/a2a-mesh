@@ -1,5 +1,6 @@
 {
   "name": "a2a-mesh-codex-bridge",
+  "private": true,
   "version": "1.0.0",
   "description": "Experimental bridge utilities for connecting Codex/App Server tools to a2a-mesh agents and registries",
   "keywords": [

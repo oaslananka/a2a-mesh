@@ -2,6 +2,8 @@
 
 Advanced companion package for teams that want the client SDK split out from the main runtime package.
 
+This package stays in the monorepo, but it is **not part of the first public npm release wave**.
+
 Most users should import `A2AClient` and `AgentRegistryClient` directly from `a2a-mesh`.
 
 This package remains useful when you explicitly want a thinner client-only dependency.

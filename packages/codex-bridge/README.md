@@ -13,12 +13,6 @@ MCP server.
 - Registry listing/search helpers for discovery-style tools
 - Optional progress callbacks so host apps can surface intermediate status
 
-## Install
-
-```bash
-npm install a2a-mesh-codex-bridge a2a-mesh
-```
-
 ## Example
 
 ```ts
@@ -49,3 +43,5 @@ The first release is intentionally narrow:
 
 Future iterations can add richer mappings for streaming task state, structured
 tool outputs, auth propagation, and Codex/App Server-specific adapters.
+
+This package remains in the repository, but it is not part of the first public npm release wave.

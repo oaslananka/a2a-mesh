@@ -1,5 +1,6 @@
 {
   "name": "a2a-mesh-testing",
+  "private": true,
   "version": "1.0.0",
   "description": "Testing helpers, fixtures and matchers for a2a-mesh agents",
   "keywords": [

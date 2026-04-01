@@ -6,12 +6,6 @@
 
 This package is intentionally marked experimental for the v1.0 launch. It focuses on JSON-RPC request and response transport over WebSockets so teams can prototype A2A-compatible flows before the full transport binding lands.
 
-## Installation
-
-```bash
-npm install a2a-mesh-ws ws
-```
-
 ## Client example
 
 ```ts
@@ -26,6 +20,8 @@ const task = await client.sendMessage({
   timestamp: new Date().toISOString(),
 });
 ```
+
+This package remains in the repository, but it is not part of the first public npm release wave.
 
 ## Server example
 

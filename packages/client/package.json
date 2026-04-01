@@ -1,5 +1,6 @@
 {
   "name": "a2a-mesh-client",
+  "private": true,
   "version": "1.0.0",
   "description": "TypeScript client SDK for Agent2Agent discovery, JSON-RPC, SSE streams and registry access",
   "keywords": [

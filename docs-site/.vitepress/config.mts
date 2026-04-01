@@ -45,19 +45,24 @@ export default defineConfig({
       ],
       '/packages/': [
         {
-          text: 'Packages',
+          text: 'Public Packages',
           items: [
             { text: 'Core', link: '/packages/core' },
-            { text: 'Client', link: '/packages/client' },
-            { text: 'Codex Bridge', link: '/packages/codex-bridge' },
             { text: 'Adapters', link: '/packages/adapters' },
             { text: 'Registry', link: '/packages/registry' },
             { text: 'Registry UI', link: '/packages/registry-ui' },
-            { text: 'gRPC', link: '/packages/grpc' },
-            { text: 'WebSocket', link: '/packages/ws' },
             { text: 'CLI', link: '/packages/cli' },
             { text: 'create-a2a-mesh', link: '/packages/create-a2a-agent' },
+          ],
+        },
+        {
+          text: 'Advanced In-Repo Packages',
+          items: [
+            { text: 'Client', link: '/packages/client' },
             { text: 'Testing', link: '/packages/testing' },
+            { text: 'gRPC', link: '/packages/grpc' },
+            { text: 'WebSocket', link: '/packages/ws' },
+            { text: 'Codex Bridge', link: '/packages/codex-bridge' },
           ],
         },
       ],

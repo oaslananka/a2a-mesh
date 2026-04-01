@@ -11,8 +11,4 @@ This package stays in the monorepo for advanced testing workflows, but it is not
 - reusable fixtures
 - `toHaveCompletedTask` matcher
 
-## Install
-
-```bash
-npm install -D a2a-mesh-testing
-```
+It remains documented for advanced teams working directly from the monorepo.

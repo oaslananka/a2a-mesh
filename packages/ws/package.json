@@ -1,5 +1,6 @@
 {
   "name": "a2a-mesh-ws",
+  "private": true,
   "version": "1.0.0",
   "description": "Experimental WebSocket transport primitives for a2a-mesh JSON-RPC workflows",
   "keywords": [

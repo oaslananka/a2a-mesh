@@ -12,6 +12,8 @@ Production-ready TypeScript runtime for Google's Agent2Agent (A2A) Protocol v1.0
 
 Most users start with `npm install a2a-mesh` and only add adapters, registry, or CLI when they actually need them.
 
+The repository also contains advanced in-repo packages for client-only installs, testing utilities, transport experiments, and ecosystem bridges. Those remain documented, but they are not part of the first public npm release wave.
+
 ## Start here
 
 - [Guide / Introduction](./guide/introduction)
