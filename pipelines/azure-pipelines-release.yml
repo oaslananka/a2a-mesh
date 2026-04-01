@@ -10,6 +10,8 @@ pool:
 
 variables:
   - group: github-mirror-secrets
+  - name: DRY_RUN
+    value: 'false'
 
 steps:
   - checkout: self
@@ -23,11 +25,22 @@ steps:
   - script: npm ci
     displayName: 'Install dependencies'
 
+  - script: |
+      echo "Release pipeline dry run: $(DRY_RUN)"
+      echo "Source branch: $(Build.SourceBranch)"
+      echo "Source branch name: $(Build.SourceBranchName)"
+    displayName: 'Show release mode'
+
   - script: npm run lint && npm run typecheck && npm run build && npm run test
     displayName: 'Full quality gate'
 
   - script: npm audit --omit=dev --audit-level=high
     displayName: 'Security audit'
+
+  - script: |
+      echo "Planned publish set:"
+      node -e "for (const pkg of ['packages/core','packages/adapters','packages/registry','cli','packages/create-a2a-agent']) { const manifest = require('./' + pkg + '/package.json'); console.log('- ' + manifest.name + '@' + manifest.version); }"
+    displayName: 'Show publish plan'
 
   - script: |
       npx changeset version
@@ -36,6 +49,12 @@ steps:
       git add -A
       git commit -m "chore: version packages [skip ci]" || echo "No changes to commit"
     displayName: 'Apply changeset versions'
+    condition: and(succeeded(), ne(variables['DRY_RUN'], 'true'))
+
+  - script: |
+      echo "Dry run enabled; skipping changeset version commit."
+    displayName: 'Skip version commit (dry run)'
+    condition: and(succeeded(), eq(variables['DRY_RUN'], 'true'))
 
   - script: |
       VERSION=$(node -p "require('./packages/core/package.json').version")
@@ -49,6 +68,12 @@ steps:
     env:
       GITHUB_PAT: $(GITHUB_PAT)
       GITHUB_REPO: $(GITHUB_REPO)
+    condition: and(succeeded(), ne(variables['DRY_RUN'], 'true'))
+
+  - script: |
+      echo "Dry run enabled; skipping GitHub mirror sync."
+    displayName: 'Skip GitHub mirror sync (dry run)'
+    condition: and(succeeded(), eq(variables['DRY_RUN'], 'true'))
 
   - script: |
       if [ -n "${GITLAB_TOKEN:-}" ] && [ -n "${GITLAB_REPO:-}" ]; then
@@ -61,6 +86,12 @@ steps:
       GITLAB_TOKEN: $(GITLAB_TOKEN)
       GITLAB_REPO: $(GITLAB_REPO)
       GITLAB_HOST: $(GITLAB_HOST)
+    condition: and(succeeded(), ne(variables['DRY_RUN'], 'true'))
+
+  - script: |
+      echo "Dry run enabled; skipping GitLab mirror sync."
+    displayName: 'Skip GitLab mirror sync (dry run)'
+    condition: and(succeeded(), eq(variables['DRY_RUN'], 'true'))
 
   - script: |
       echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)" > ~/.npmrc
@@ -68,6 +99,12 @@ steps:
         npm publish --provenance --access public --workspace "$workspace"
       done
     displayName: 'Publish packages to npm'
+    condition: and(succeeded(), ne(variables['DRY_RUN'], 'true'))
+
+  - script: |
+      echo "Dry run enabled; skipping npm publish."
+    displayName: 'Skip npm publish (dry run)'
+    condition: and(succeeded(), eq(variables['DRY_RUN'], 'true'))
 
   - script: |
       python3 scripts/azuredevops.py github-release \
@@ -77,3 +114,9 @@ steps:
         --changelog CHANGELOG.md \
         --notes "$(RELEASE_NOTES)"
     displayName: 'Create GitHub Release'
+    condition: and(succeeded(), ne(variables['DRY_RUN'], 'true'))
+
+  - script: |
+      echo "Dry run enabled; skipping GitHub Release creation."
+    displayName: 'Skip GitHub Release (dry run)'
+    condition: and(succeeded(), eq(variables['DRY_RUN'], 'true'))
