@@ -1,3 +1,9 @@
+parameters:
+  - name: dryRun
+    displayName: 'Dry run'
+    type: boolean
+    default: false
+
 trigger:
   tags:
     include:
@@ -11,7 +17,7 @@ pool:
 variables:
   - group: github-mirror-secrets
   - name: DRY_RUN
-    value: 'false'
+    value: ${{ parameters.dryRun }}
 
 steps:
   - checkout: self
