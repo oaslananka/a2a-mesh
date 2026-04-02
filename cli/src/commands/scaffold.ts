@@ -23,7 +23,7 @@ function renderPackageJson(name: string, adapter: ScaffoldAdapter): string {
   } else if (adapter === 'anthropic') {
     dependencies['@anthropic-ai/sdk'] = '^0.39.0';
   } else if (adapter === 'langchain') {
-    dependencies.langchain = '^0.3.36';
+    dependencies.langchain = '^1.2.39';
   }
 
   return JSON.stringify(

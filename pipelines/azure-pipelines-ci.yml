@@ -81,7 +81,7 @@ steps:
       done
     displayName: 'Smoke test all packages'
 
-  - script: npx bundlesize --config .bundlesizerc.json
+  - script: node scripts/check-bundle-sizes.mjs
     displayName: 'Check bundle sizes'
     condition: eq(variables['nodeVersion'], '20.x')
 

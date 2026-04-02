@@ -68,7 +68,6 @@
     "@types/node": "^25.5.0",
     "@vitest/coverage-v8": "^4.1.2",
     "better-sqlite3": "^11.10.0",
-    "bundlesize": "^0.18.2",
     "eslint": "^10.1.0",
     "extract-changelog-release": "^1.0.0",
     "globals": "^17.4.0",

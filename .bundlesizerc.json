@@ -1,7 +1,0 @@
-{
-  "files": [
-    { "path": "packages/core/dist/index.mjs", "maxSize": "50 kB" },
-    { "path": "packages/client/dist/index.mjs", "maxSize": "20 kB" },
-    { "path": "packages/adapters/dist/index.mjs", "maxSize": "30 kB" }
-  ]
-}
