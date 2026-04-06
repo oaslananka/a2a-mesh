@@ -1,0 +1,48 @@
+{
+  "name": "a2a-mesh-mcp-bridge",
+  "version": "1.0.0",
+  "description": "Bidirectional MCP ↔ A2A Protocol bridge",
+  "keywords": [
+    "a2a",
+    "mcp",
+    "model-context-protocol",
+    "agent2agent",
+    "typescript"
+  ],
+  "author": "oaslananka",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/oaslananka/a2a-mesh#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oaslananka/a2a-mesh.git",
+    "directory": "packages/mcp-bridge"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "unbuild",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "a2a-mesh": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1",
+    "vitest": "^4.1.2"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

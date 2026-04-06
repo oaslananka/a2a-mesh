@@ -1,0 +1,28 @@
+{
+  "name": "a2a-demo",
+  "version": "1.0.0",
+  "description": "Working multi-agent demo for a2a-mesh",
+  "private": true,
+  "scripts": {
+    "dev": "tsx main.ts",
+    "start": "tsx main.ts",
+    "smoke-test": "tsx run-demo.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "a2a-mesh": "*",
+    "a2a-mesh-adapters": "*",
+    "a2a-mesh-registry": "*",
+    "dotenv": "^17.2.3",
+    "openai": "^4.104.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.2.2"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,22 @@
+trigger:
+  batch: 'true'
+  branches:
+    include:
+      - main
+      - 'feature/*'
+      - 'fix/*'
+  paths:
+    exclude:
+      - 'docs/*'
+      - '*.md'
+
+pr:
+  autoCancel: 'true'
+  branches:
+    include:
+      - main
+
+jobs:
+  - template: pipelines/templates/ci-job.yml
+    parameters:
+      nodeVersion: '20.20.2'

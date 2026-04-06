@@ -1,0 +1,15 @@
+name: Release PR (Disabled)
+
+# Releases are managed by Azure DevOps.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type CONFIRM to proceed'
+        required: true
+
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Release is managed by Azure DevOps pipelines."

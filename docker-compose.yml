@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  registry:
+    build:
+      context: .
+      dockerfile: ./apps/demo/Dockerfile
+    working_dir: /app
+    command: ['node', '--import', 'tsx', 'packages/registry/bin/start.ts']
+    ports:
+      - '3099:3099'
+    environment:
+      PORT: '3099'
+      ALLOW_LOCALHOST: 'true'
+      ALLOW_PRIVATE_NETWORKS: 'true'
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3099/health']
+      interval: 10s
+
+  demo:
+    build:
+      context: .
+      dockerfile: ./apps/demo/Dockerfile
+    ports:
+      - '3001:3001'
+      - '3002:3002'
+      - '3003:3003'
+    depends_on:
+      registry:
+        condition: service_healthy
+    environment:
+      REGISTRY_URL: http://registry:3099
+      RUN_EMBEDDED_REGISTRY: 'false'
+      ALLOW_PRIVATE_NETWORKS: 'true'
+      PORT_RESEARCHER: '3001'
+      PORT_WRITER: '3002'
+      PORT_ORCHESTRATOR: '3003'
+      RESEARCHER_URL: http://demo:3001
+      WRITER_URL: http://demo:3002
+      ORCHESTRATOR_URL: http://demo:3003
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - '16686:16686'
+      - '4318:4318'
+
+volumes:
+  redis-data:

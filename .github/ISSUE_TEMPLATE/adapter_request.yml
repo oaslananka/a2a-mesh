@@ -1,0 +1,15 @@
+name: New Adapter Request
+description: Request support for a new AI framework or provider
+labels: ['adapter', 'enhancement']
+body:
+  - type: input
+    id: framework
+    attributes:
+      label: Framework / Provider name
+      placeholder: 'e.g. AutoGen, Semantic Kernel, Bedrock'
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case

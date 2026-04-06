@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: a2a-mesh
+spec:
+  selector:
+    matchLabels:
+      app: a2a-mesh
+  endpoints:
+    - port: http
+      path: /health

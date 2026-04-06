@@ -1,0 +1,105 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
+
+stages:
+  - verify
+  - docs
+  - package
+
+default:
+  interruptible: true
+
+variables:
+  NODE_ENV: development
+  NPM_CONFIG_CACHE: '$CI_PROJECT_DIR/.npm'
+  A2A_NODE_IMAGE: 'node:20-bookworm'
+  A2A_HELM_IMAGE: 'alpine/helm:3.16.4'
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm/
+
+.manual_job_rules: &manual_job_rules
+  rules:
+    - when: manual
+
+.node_job: &node_job
+  image: $A2A_NODE_IMAGE
+  before_script:
+    - node --version
+    - npm --version
+    - npm ci
+  <<: *manual_job_rules
+
+.helm_job: &helm_job
+  image: $A2A_HELM_IMAGE
+  before_script:
+    - helm version
+  <<: *manual_job_rules
+
+runner_probe:
+  <<: *node_job
+  stage: verify
+  script:
+    - 'echo "Pipeline source: ${CI_PIPELINE_SOURCE}"'
+    - 'echo "Runner description: ${CI_RUNNER_DESCRIPTION:-unknown}"'
+    - 'echo "Runner tags: ${CI_RUNNER_TAGS:-none}"'
+    - node --version
+    - npm --version
+    - 'if command -v helm >/dev/null 2>&1; then helm version; else echo "helm not available on this runner"; fi'
+
+quality_gate:
+  <<: *node_job
+  stage: verify
+  script:
+    - npm run lint
+    - npm run typecheck
+    - npm run build
+    - npm run test:coverage
+    - npm run test:integration
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - coverage/
+      - test-results/
+
+docs_build:
+  <<: *node_job
+  stage: docs
+  script:
+    - npm run docs:build
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - docs-site/.vitepress/dist/
+
+package_workspace:
+  <<: *node_job
+  stage: package
+  script:
+    - mkdir -p .artifacts/npm
+    - npm pack --pack-destination .artifacts/npm --workspace packages/core --workspace packages/adapters --workspace packages/registry --workspace cli --workspace packages/create-a2a-agent
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - .artifacts/npm/
+
+helm_bundle:
+  <<: *helm_job
+  stage: package
+  script:
+    - mkdir -p .artifacts/helm
+    - helm lint deployments/helm/a2a-mesh
+    - helm template a2a-mesh deployments/helm/a2a-mesh > .artifacts/helm/a2a-mesh-rendered.yaml
+    - helm package deployments/helm/a2a-mesh --destination .artifacts/helm
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - .artifacts/helm/

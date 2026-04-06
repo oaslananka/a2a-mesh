@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package a2a.v1;
+
+service A2AService {
+  rpc GetAgentCard (EmptyRequest) returns (AgentCardResponse);
+  rpc SendMessage (SendMessageRequest) returns (TaskResponse);
+  rpc StreamMessage (SendMessageRequest) returns (stream TaskResponse);
+  rpc GetTask (TaskRequest) returns (TaskResponse);
+  rpc CancelTask (TaskRequest) returns (TaskResponse);
+}
+
+message EmptyRequest {}
+
+message AgentCardResponse {
+  string json_card = 1;
+}
+
+message SendMessageRequest {
+  string message_text = 1;
+}
+
+message TaskRequest {
+  string task_id = 1;
+}
+
+message TaskResponse {
+  string task_json = 1;
+}

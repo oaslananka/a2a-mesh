@@ -1,0 +1,14 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD041": false,
+    "MD060": false,
+    "MD024": {
+      "allow_different_nesting": true,
+      "siblings_only": true,
+    },
+  },
+  "globs": ["**/*.md", "!node_modules/**", "!**/node_modules/**", "!docs-site/**/dist/**"],
+}

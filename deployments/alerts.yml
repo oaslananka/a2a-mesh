@@ -1,0 +1,17 @@
+groups:
+  - name: a2a-mesh
+    rules:
+      - alert: HighTaskFailureRate
+        expr: rate(a2a_tasks_failed_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Elevated a2a-mesh task failure rate
+      - alert: RegistryDown
+        expr: up{job="a2a-registry"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: a2a-mesh registry is unreachable

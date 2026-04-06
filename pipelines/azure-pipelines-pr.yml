@@ -1,0 +1,66 @@
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - main
+  drafts: false
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - checkout: self
+    fetchDepth: 0
+
+  - script: |
+      bash scripts/setup-node.sh '20.20.2' '10.9.8'
+    displayName: 'Setup Node.js 20.20.2 + npm 10.9.8'
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npm run lint
+    displayName: 'Lint check'
+
+  - script: npm run format:check
+    displayName: 'Prettier format check'
+
+  - script: npm run lint:md
+    displayName: 'Markdown lint'
+
+  - script: npx lychee --config .lychee.toml docs-site --offline || true
+    displayName: 'Link check (non-blocking)'
+
+  - script: npm run typecheck
+    displayName: 'Type check'
+
+  - script: npm run build
+    displayName: 'Build'
+
+  - script: npm run docs:build
+    displayName: 'Build docs site'
+
+  - script: npm run test
+    displayName: 'Tests'
+
+  - script: |
+      for pkg in packages/core packages/client packages/adapters packages/registry packages/testing packages/ws packages/grpc cli; do
+        echo "Smoke testing $pkg..."
+        if [ "$pkg" = "cli" ]; then
+          if [ -f "./$pkg/dist/index.cjs" ]; then
+            node "./$pkg/dist/index.cjs" --help >/dev/null && echo "  ✓ $pkg"
+          else
+            echo "  ⚠ $pkg/dist/index.cjs not found"
+          fi
+        elif [ -f "./$pkg/dist/index.cjs" ]; then
+          node -e "require('./$pkg/dist/index.cjs')" && echo "  ✓ $pkg"
+        else
+          echo "  ⚠ $pkg/dist/index.cjs not found (may be ESM-only)"
+        fi
+      done
+    displayName: 'Smoke test packages'
+
+  - script: |
+      npx changeset status --since=origin/main
+    displayName: 'Changeset check'
+    continueOnError: false

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.3/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [],
+  "linked": [
+    ["a2a-mesh", "a2a-mesh-adapters", "a2a-mesh-registry", "a2a-mesh-cli", "create-a2a-mesh"]
+  ],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [
+    "a2a-mesh-client",
+    "a2a-mesh-testing",
+    "a2a-mesh-grpc",
+    "a2a-mesh-ws",
+    "a2a-mesh-codex-bridge"
+  ]
+}

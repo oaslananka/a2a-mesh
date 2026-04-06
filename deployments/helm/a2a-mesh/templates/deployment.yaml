@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: a2a-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: a2a-mesh
+  template:
+    metadata:
+      labels:
+        app: a2a-mesh
+    spec:
+      containers:
+        - name: a2a-mesh
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          imagePullPolicy: '{{ .Values.image.pullPolicy }}'
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000

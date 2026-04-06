@@ -1,0 +1,5 @@
+exclude = ["node_modules", "localhost", "127.0.0.1"]
+
+accept = [200, 403]
+
+exclude_path = ["node_modules/**"]

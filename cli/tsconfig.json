@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "ignoreDeprecations": "5.0"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../packages/core"
+    },
+    {
+      "path": "../packages/registry"
+    }
+  ]
+}

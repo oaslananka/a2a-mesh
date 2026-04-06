@@ -1,0 +1,10 @@
+dist/
+coverage/
+node_modules/
+*.min.js
+package-lock.json
+deployments/helm/**/templates/*.yml
+deployments/helm/**/templates/*.yaml
+docs-site/.vitepress/cache/
+docs-site/.vitepress/dist/
+docs-site/.vitepress/.temp/

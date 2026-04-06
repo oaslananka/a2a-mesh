@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/client" },
+    { "path": "./packages/codex-bridge" },
+    { "path": "./packages/registry" },
+    { "path": "./packages/grpc" },
+    { "path": "./packages/ws" },
+    { "path": "./packages/testing" },
+    { "path": "./packages/create-a2a-agent" },
+    { "path": "./packages/adapters" },
+    { "path": "./cli" },
+    { "path": "./apps/demo" },
+    { "path": "./apps/registry-ui" }
+  ]
+}

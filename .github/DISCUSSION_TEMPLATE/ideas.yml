@@ -1,0 +1,89 @@
+title: '[Idea] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for **a2a-mesh**?
+
+        Use this category for:
+        - new adapters and integrations
+        - DX improvements
+        - runtime / registry / CLI ideas
+        - docs and onboarding improvements
+        - architecture or ecosystem proposals
+
+        For concrete bugs, open an **Issue** instead.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short idea summary
+      description: One-line version of your idea.
+      placeholder: Add adapter support for ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Adapters / integrations
+        - A2A runtime
+        - MCP bridge
+        - Registry / control plane
+        - CLI / scaffolding
+        - Security / auth
+        - Observability / tracing
+        - Documentation
+        - Examples / demos
+        - Developer experience
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Explain the pain point or limitation.
+      placeholder: Today, users need to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe your suggested approach.
+      placeholder: We could add...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any other approaches or workarounds?
+      placeholder: Another option would be...
+    validations:
+      required: false
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected impact
+      description: Who benefits, and how?
+      placeholder: This would help users who...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing discussions and issues first
+          required: true
+        - label: This is a proposal or idea, not a bug report
+          required: true

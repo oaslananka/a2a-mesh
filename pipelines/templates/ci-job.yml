@@ -1,0 +1,100 @@
+parameters:
+  - name: nodeVersion
+    type: string
+    default: '20.20.2'
+
+jobs:
+  - job: verify
+    displayName: 'Verify monorepo'
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      npm_config_cache: $(Pipeline.Workspace)/.npm
+    steps:
+      - checkout: self
+        fetchDepth: 0
+
+      - script: |
+          bash scripts/setup-node.sh '${{ parameters.nodeVersion }}' '10.9.8'
+        displayName: 'Setup Node.js ${{ parameters.nodeVersion }} + npm 10.9.8'
+
+      - task: Cache@2
+        displayName: 'Cache npm packages'
+        inputs:
+          key: 'npm | "$(Agent.OS)" | package-lock.json'
+          restoreKeys: |
+            npm | "$(Agent.OS)"
+          path: $(npm_config_cache)
+
+      - script: npm ci --prefer-offline
+        displayName: 'Install dependencies'
+
+      - script: npm run lint
+        displayName: 'ESLint'
+
+      - script: npm run format:check
+        displayName: 'Prettier format check'
+
+      - script: npm run lint:md
+        displayName: 'Markdown lint'
+
+      - script: npx lychee --config .lychee.toml docs-site --offline || true
+        displayName: 'Link check (non-blocking)'
+
+      - script: npm run typecheck
+        displayName: 'TypeScript type check'
+
+      - script: npm run build
+        displayName: 'Build all packages'
+
+      - script: npm run docs:build
+        displayName: 'Build docs site'
+
+      - script: npm run test:unit -- --coverage
+        displayName: 'Run unit tests with coverage'
+
+      - script: npm run test:integration
+        displayName: 'Run integration tests'
+        timeoutInMinutes: 5
+
+      - script: |
+          for pkg in packages/core packages/client packages/adapters packages/registry packages/testing packages/ws packages/grpc cli; do
+            echo "Smoke testing $pkg..."
+            if [ "$pkg" = "cli" ]; then
+              if [ -f "./$pkg/dist/index.cjs" ]; then
+                node "./$pkg/dist/index.cjs" --help >/dev/null && echo "  ✓ $pkg"
+              else
+                echo "  ⚠ $pkg/dist/index.cjs not found"
+              fi
+            elif [ -f "./$pkg/dist/index.cjs" ]; then
+              node -e "require('./$pkg/dist/index.cjs')" && echo "  ✓ $pkg"
+            else
+              echo "  ⚠ $pkg/dist/index.cjs not found (may be ESM-only)"
+            fi
+          done
+        displayName: 'Smoke test packages'
+
+      - script: node scripts/check-bundle-sizes.mjs
+        displayName: 'Check bundle sizes'
+
+      - task: PublishTestResults@2
+        displayName: 'Publish unit test results'
+        condition: always()
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'test-results/junit-unit.xml'
+          testRunTitle: 'Unit Tests - Node ${{ parameters.nodeVersion }}'
+
+      - task: PublishTestResults@2
+        displayName: 'Publish integration test results'
+        condition: always()
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'test-results/junit-integration.xml'
+          testRunTitle: 'Integration Tests - Node ${{ parameters.nodeVersion }}'
+
+      - task: PublishCodeCoverageResults@2
+        displayName: 'Publish code coverage'
+        condition: always()
+        inputs:
+          summaryFileLocation: 'coverage/lcov.info'

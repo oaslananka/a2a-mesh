@@ -1,0 +1,80 @@
+title: '[Show and Tell] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Built something with **a2a-mesh**? Share it here.
+
+        Great posts for this category:
+        - demos
+        - architecture screenshots
+        - agent workflows
+        - integrations
+        - production experiments
+        - lessons learned
+
+  - type: input
+    id: project_name
+    attributes:
+      label: Project name
+      description: What did you build?
+      placeholder: Multi-agent support assistant
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Link
+      description: Repo, demo, article, or video link.
+      placeholder: https://...
+    validations:
+      required: false
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What did you build?
+      description: Give a short overview.
+      placeholder: I built...
+    validations:
+      required: true
+
+  - type: textarea
+    id: stack
+    attributes:
+      label: Stack
+      description: Which adapters, frameworks, or components did you use?
+      placeholder: |
+        - OpenAI adapter
+        - MCP bridge
+        - Registry
+        - OpenTelemetry
+    validations:
+      required: false
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Implementation details
+      description: Share any architecture notes, tradeoffs, or interesting decisions.
+      placeholder: The main challenge was...
+    validations:
+      required: false
+
+  - type: textarea
+    id: lessons
+    attributes:
+      label: Lessons learned
+      description: What worked well, and what would you improve next?
+      placeholder: I learned that...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Confirmation
+      options:
+        - label: I’m okay with this being shared publicly in the repository discussions
+          required: true

@@ -1,0 +1,89 @@
+title: '[Q&A] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for using **a2a-mesh**.
+
+        Use this category for:
+        - setup and installation questions
+        - adapters and framework usage
+        - A2A/MCP integration questions
+        - registry, CLI, auth, tracing, and architecture questions
+
+        For confirmed bugs, please open an **Issue** instead.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      description: What is your question mainly about?
+      options:
+        - Getting started / installation
+        - A2A runtime
+        - Client / server usage
+        - OpenAI adapter
+        - Anthropic adapter
+        - LangChain adapter
+        - Google ADK adapter
+        - LlamaIndex adapter
+        - CrewAI adapter
+        - MCP bridge
+        - Registry / control plane
+        - Auth / security
+        - Observability / tracing
+        - CLI / scaffolding
+        - Deployment / production
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: Describe what you are trying to do and what is unclear.
+      placeholder: I am trying to connect two agents through...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context / what you already tried
+      description: Include relevant details so others can help faster.
+      placeholder: |
+        - Package versions:
+        - Runtime / framework:
+        - Deployment environment:
+        - What I already tried:
+    validations:
+      required: false
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Relevant code or config
+      description: Paste only the minimum needed snippet.
+      render: typescript
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error message or logs
+      description: Paste any relevant output.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing discussions and issues first
+          required: true
+        - label: This is a question, not a confirmed bug report
+          required: true

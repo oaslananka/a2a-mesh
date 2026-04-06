@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "composite": true,
+    "paths": {
+      "a2a-mesh": ["packages/core/src/index.ts"],
+      "a2a-mesh-client": ["packages/client/src/index.ts"],
+      "a2a-mesh-adapters": ["packages/adapters/src/index.ts"],
+      "a2a-mesh-registry": ["packages/registry/src/index.ts"],
+      "a2a-mesh-testing": ["packages/testing/src/index.ts"],
+      "a2a-mesh-cli": ["cli/src/index.ts"],
+      "a2a-mesh-grpc": ["packages/grpc/src/index.ts"],
+      "a2a-mesh-ws": ["packages/ws/src/index.ts"],
+      "a2a-mesh-codex-bridge": ["packages/codex-bridge/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

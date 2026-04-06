@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "ignoreDeprecations": "5.0",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "composite": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "../../packages/adapters"
+    },
+    {
+      "path": "../../packages/registry"
+    }
+  ]
+}

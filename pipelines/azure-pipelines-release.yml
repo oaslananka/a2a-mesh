@@ -1,0 +1,145 @@
+parameters:
+  - name: dryRun
+    displayName: 'Dry run'
+    type: boolean
+    default: true
+  - name: publishApproved
+    displayName: 'Publish approved by maintainer'
+    type: boolean
+    default: false
+
+trigger:
+  tags:
+    include:
+      - 'v*'
+
+pr: none
+
+variables:
+  - name: DRY_RUN
+    value: ${{ parameters.dryRun }}
+  - name: PUBLISH_APPROVED
+    value: ${{ parameters.publishApproved }}
+
+stages:
+  - stage: ValidateRelease
+    displayName: 'Validate release candidate'
+    jobs:
+      - job: Validate
+        displayName: 'Validate release candidate'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+            persistCredentials: true
+            fetchDepth: 0
+
+          - script: |
+              bash scripts/setup-node.sh '20.20.2' '10.9.8'
+            displayName: 'Setup Node.js 20.20.2 + npm 10.9.8'
+
+          - script: npm ci
+            displayName: 'Install dependencies'
+
+          - script: |
+              echo "Release pipeline dry run: $(DRY_RUN)"
+              echo "Publish approved: $(PUBLISH_APPROVED)"
+              echo "Source branch: $(Build.SourceBranch)"
+              echo "Source branch name: $(Build.SourceBranchName)"
+            displayName: 'Show release mode'
+
+          - script: npm run lint
+            displayName: 'Lint check'
+
+          - script: npm run format:check
+            displayName: 'Prettier format check'
+
+          - script: npm run lint:md
+            displayName: 'Markdown lint'
+
+          - script: npx lychee --config .lychee.toml docs-site --offline || true
+            displayName: 'Link check (non-blocking)'
+
+          - script: npm run typecheck
+            displayName: 'Type check'
+
+          - script: npm run build
+            displayName: 'Build'
+
+          - script: npm run docs:build
+            displayName: 'Build docs site'
+
+          - script: npm run test
+            displayName: 'Tests'
+
+          - script: npm audit --omit=dev --audit-level=high
+            displayName: 'Security audit'
+
+          - script: |
+              echo "Planned publish set:"
+              node -e "for (const pkg of ['packages/core','packages/adapters','packages/registry','cli','packages/create-a2a-agent']) { const manifest = require('./' + pkg + '/package.json'); console.log('- ' + manifest.name + '@' + manifest.version); }"
+            displayName: 'Show publish plan'
+
+          - script: |
+              echo "Dry run enabled; the npm-production environment gate will be skipped."
+            displayName: 'Skip publish (dry run)'
+            condition: and(succeeded(), eq(variables['DRY_RUN'], 'true'))
+
+          - script: |
+              echo "Publish approval parameter is false; the npm-production environment gate will be skipped."
+            displayName: 'Skip publish (approval parameter required)'
+            condition: and(succeeded(), ne(variables['DRY_RUN'], 'true'), ne(variables['PUBLISH_APPROVED'], 'true'))
+
+  - stage: PublishRelease
+    displayName: 'Publish to npm'
+    dependsOn: ValidateRelease
+    condition: and(succeeded(), ne(variables['DRY_RUN'], 'true'), eq(variables['PUBLISH_APPROVED'], 'true'))
+    jobs:
+      - deployment: PublishToNpm
+        displayName: 'Publish packages to npm'
+        environment: 'npm-production'
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  persistCredentials: true
+                  fetchDepth: 0
+
+                - script: |
+                    bash scripts/setup-node.sh '20.20.2' '10.9.8'
+                  displayName: 'Setup Node.js 20.20.2 + npm 10.9.8'
+
+                - script: npm ci
+                  displayName: 'Install dependencies'
+
+                - script: |
+                    test -n "$(NPM_TOKEN)" || (echo "NPM_TOKEN secret is required for release publish." && exit 1)
+                  displayName: 'Verify npm token'
+
+                - script: |
+                    echo "Environment approval granted. Proceeding with npm publish."
+                    echo "Publishing from $(Build.SourceBranch) at $(Build.SourceVersion)"
+                  displayName: 'Confirm environment approval'
+
+                - script: |
+                    echo "Planned publish set:"
+                    node -e "for (const pkg of ['packages/core','packages/adapters','packages/registry','cli','packages/create-a2a-agent']) { const manifest = require('./' + pkg + '/package.json'); console.log('- ' + manifest.name + '@' + manifest.version); }"
+                  displayName: 'Show publish plan'
+
+                - script: |
+                    npx changeset version
+                    git config user.email "ci-bot@a2a-mesh.local"
+                    git config user.name "a2a-mesh CI"
+                    git add -A
+                    git commit -m "chore: version packages [skip ci]" || echo "No changes to commit"
+                  displayName: 'Apply changeset versions'
+
+                - script: |
+                    echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)" > ~/.npmrc
+                    for workspace in packages/core packages/adapters packages/registry cli packages/create-a2a-agent; do
+                      npm publish --provenance --access public --workspace "$workspace"
+                    done
+                  displayName: 'Publish packages to npm'

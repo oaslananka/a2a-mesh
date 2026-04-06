@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
+  },
+  "include": [
+    "packages/*/src/**/*.ts",
+    "packages/*/tests/**/*.ts",
+    "cli/src/**/*.ts",
+    "cli/tests/**/*.ts",
+    "tests/**/*.ts",
+    "apps/registry-ui/tests/**/*.ts",
+    "apps/registry-ui/playwright.config.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

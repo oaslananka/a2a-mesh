@@ -1,0 +1,63 @@
+{
+  "name": "a2a-mesh-ws",
+  "version": "1.0.0",
+  "description": "Experimental WebSocket transport primitives for a2a-mesh JSON-RPC workflows",
+  "keywords": [
+    "a2a",
+    "agent2agent",
+    "websocket",
+    "json-rpc",
+    "typescript"
+  ],
+  "author": "oaslananka",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/oaslananka/a2a-mesh/tree/main/packages/ws#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oaslananka/a2a-mesh.git",
+    "directory": "packages/ws"
+  },
+  "bugs": {
+    "url": "https://github.com/oaslananka/a2a-mesh/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "peerDependencies": {
+    "ws": "^8.18.0"
+  },
+  "peerDependenciesMeta": {
+    "ws": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "vitest": "^4.1.2",
+    "ws": "^8.18.3"
+  },
+  "dependencies": {
+    "a2a-mesh": "^1.1.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "unbuild --config build.config.ts",
+    "test": "vitest run"
+  }
+}

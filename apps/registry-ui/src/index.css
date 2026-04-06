@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+:root {
+  --mesh-ink: #dbeafe;
+  --mesh-surface: rgba(7, 16, 32, 0.86);
+  --mesh-panel: rgba(9, 19, 38, 0.82);
+  --mesh-line: rgba(96, 165, 250, 0.18);
+  --mesh-cyan: #22d3ee;
+  --mesh-blue: #3b82f6;
+  --mesh-teal: #14b8a6;
+  --mesh-rose: #fb7185;
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--mesh-ink);
+  background:
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.16), transparent 30%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 32%),
+    linear-gradient(135deg, #020817 0%, #0f172a 48%, #082f49 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(var(--mesh-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mesh-line) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 82%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.mesh-display {
+  font-family: var(--font-display);
+}
+
+.glass-panel {
+  background: var(--mesh-panel);
+  backdrop-filter: blur(18px);
+}
